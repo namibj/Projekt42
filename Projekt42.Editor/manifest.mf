@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+OpenIDE-Module: Projekt42.Editor
+OpenIDE-Module-Localizing-Bundle: Projekt42/Editor/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+
