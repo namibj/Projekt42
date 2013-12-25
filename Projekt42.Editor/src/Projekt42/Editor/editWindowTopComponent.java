@@ -41,13 +41,88 @@ import org.openide.util.NbBundle.Messages;
 })
 public final class editWindowTopComponent extends TopComponent {
 
-    ArrayList<actionTableRow> actionTableData;
+    ArrayList<actionTableRow> actionTableData = new ArrayList<actionTableRow>();
+    ArrayList<GegenstandTableRow> gegenstandTableData = new ArrayList<GegenstandTableRow>();
     JComboBox<String> actionTableGegenstandAuswahl = new JComboBox<String>();
-    
+    private ActionTableModel actionTableModel;
+
     public editWindowTopComponent() {
         initComponents();
         setName(Bundle.CTL_editWindowTopComponent());
         setToolTipText(Bundle.HINT_editWindowTopComponent());
+
+    }
+
+    public class GegenstandTableRow {
+
+        private String enumConstant, userDisplayName, tooltip, imageFileNameSnippets;
+
+        public GegenstandTableRow(String enumConstant, String userDisplayName, String tooltip, String imageFileNameSnippets) {
+            this.enumConstant = enumConstant;
+            this.userDisplayName = userDisplayName;
+            this.tooltip = tooltip;
+            this.imageFileNameSnippets = imageFileNameSnippets;
+        }
+
+        public GegenstandTableRow() {
+            this("", "", "", "");
+        }
+
+        public String getEnumConstant() {
+            return enumConstant;
+        }
+
+        public void setEnumConstant(String enumConstant) {
+            this.enumConstant = enumConstant;
+        }
+
+        public String getUserDisplayName() {
+            return userDisplayName;
+        }
+
+        public void setUserDisplayName(String userDisplayName) {
+            this.userDisplayName = userDisplayName;
+        }
+
+        public String getTooltip() {
+            return tooltip;
+        }
+
+        public void setTooltip(String tooltip) {
+            this.tooltip = tooltip;
+        }
+
+        public String getImageFileNameSnippets() {
+            return imageFileNameSnippets;
+        }
+
+        public void setImageFileNameSnippets(String imageFileNameSnippets) {
+            this.imageFileNameSnippets = imageFileNameSnippets;
+        }
+
+        @Override
+        public String toString() {
+            return "GegenstandTableRow{" + "enumConstant=" + enumConstant + ", userDisplayName=" + userDisplayName + ", tooltip=" + tooltip + ", imageFileNameSnippets=" + imageFileNameSnippets + '}';
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 3;
+            hash = 53 * hash + (this.enumConstant != null ? this.enumConstant.hashCode() : 0);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final GegenstandTableRow other = (GegenstandTableRow) obj;
+            return !((this.enumConstant == null) ? (other.enumConstant != null) : !this.enumConstant.equals(other.enumConstant));
+        }
 
     }
 
@@ -107,8 +182,6 @@ public final class editWindowTopComponent extends TopComponent {
 
     class ActionTableModel extends AbstractTableModel {
 
-        
-
         @Override
         public int getRowCount() {
             return actionTableData.size();
@@ -122,6 +195,68 @@ public final class editWindowTopComponent extends TopComponent {
         @Override
         public Class getColumnClass(int c) {
             return getValueAt(0, c).getClass();
+        }
+
+        @SuppressWarnings("Unchecked")
+        @Override
+        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+            switch (columnIndex) {
+                case 0:
+                    actionTableData.get(rowIndex).setBewegterGegenstand((String) aValue);
+                case 1:
+                    actionTableData.get(rowIndex).setZielGegenstand((String) aValue);
+                case 2:
+                    actionTableData.get(rowIndex).setZielIstInventar((Boolean) aValue);
+                case 3:
+                    actionTableData.get(rowIndex).setMethode((String) aValue);
+                case 4:
+                    actionTableData.get(rowIndex).setArgumente((String) aValue);
+            }
+        }
+
+        @Override
+        public int findColumn(String columnName) {
+            switch (columnName) {
+                case "bewegter Gegenstand":
+                    return 0;
+                case "Zielgegentsnd":
+                    return 1;
+                case "Zielgegenstand im Inventar?":
+                    return 2;
+                case "Methode":
+                    return 3;
+                case "Argumente":
+                    return 4;
+                default:
+                    return -1;
+            }
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            switch (column) {
+                case 0:
+                    return "bewegter Gegenstand";
+                case 1:
+                    return "Zielgegenstand";
+                case 2:
+                    return "Zielgegenstand im Inventar?";
+                case 3:
+                    return "Methode";
+                case 4:
+                    return "Argumente";
+                default:
+                    return null;
+            }
+        }
+
+        public void notifyRowAdded() {
+            fireTableRowsInserted(getRowCount(), getRowCount());
+        }
+
+        @Override
+        public boolean isCellEditable(int row, int col) {
+            return true;
         }
 
         @Override
@@ -143,6 +278,50 @@ public final class editWindowTopComponent extends TopComponent {
 
     }
 
+    class GegentandTableModel extends AbstractTableModel {//TODO: Implement something updating the JComboBox<String> to reflect changes made in the Gegenstand list(or, table)
+
+        @Override
+        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+            super.setValueAt(aValue, rowIndex, columnIndex); //TODO: Implement, see other Model
+        }
+
+        @Override
+        public boolean isCellEditable(int rowIndex, int columnIndex) {
+            return true;
+        }
+
+        @Override
+        public Class<?> getColumnClass(int columnIndex) {
+            return String.class;
+        }
+
+        @Override
+        public int findColumn(String columnName) {
+            return super.findColumn(columnName); //TODO: Implement, see other Model
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            return super.getColumnName(column); //TODO: Implement, see other Model
+        }
+
+        @Override
+        public int getRowCount() {
+            return gegenstandTableData.size();
+        }
+
+        @Override
+        public int getColumnCount() {
+            return 4;
+        }
+
+        @Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            throw new UnsupportedOperationException("Not supported yet."); //TODO: Implement, see other Model
+        }
+
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -158,7 +337,7 @@ public final class editWindowTopComponent extends TopComponent {
         jPanel1 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
 
-        jTable1.setModel(new ActionTableModel());
+        jTable1.setModel(actionTableModel = new ActionTableModel());
         jTable1.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(actionTableGegenstandAuswahl));
         jTable1.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(actionTableGegenstandAuswahl));
         jTable1.getTableHeader().setReorderingAllowed(false);
@@ -227,7 +406,8 @@ public final class editWindowTopComponent extends TopComponent {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        jTable1.addColumn(null);// TODO add your handling code here:
+        actionTableData.add(new actionTableRow());
+        actionTableModel.notifyRowAdded();// TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

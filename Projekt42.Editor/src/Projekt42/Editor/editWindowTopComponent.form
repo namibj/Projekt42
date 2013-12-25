@@ -54,7 +54,7 @@
         <Component class="javax.swing.JTable" name="jTable1">
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor" postCode="jTable1.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(actionTableGegenstandAuswahl));&#xa;jTable1.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(actionTableGegenstandAuswahl));">
-              <Connection code="new ActionTableModel()" type="code"/>
+              <Connection code="actionTableModel = new ActionTableModel()" type="code"/>
             </Property>
             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
               <TableColumnModel selectionModel="0"/>
