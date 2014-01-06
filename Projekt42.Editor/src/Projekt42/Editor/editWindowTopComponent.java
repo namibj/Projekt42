@@ -41,15 +41,23 @@ import org.openide.util.NbBundle.Messages;
 })
 public final class editWindowTopComponent extends TopComponent {
 
+    //Die Liste mit den ganzen Aktionen, die bei Kombinationen von Gegenständen zur verfügung stehen werden
     ArrayList<actionTableRow> actionTableData = new ArrayList<actionTableRow>();
+
+    //Die Liste mit den Ganzen Gegenständen, die man für die Aktionen dann auswählekann
     ArrayList<GegenstandTableRow> gegenstandTableData = new ArrayList<GegenstandTableRow>();
+
+    //Die JComboBox, die die Auswahl jeweils eines der Gegenstände für die Aktionen ermöglicht
     JComboBox<String> actionTableGegenstandAuswahl = new JComboBox<String>();
+
+    //Das TableModel für die Tabelle mit den Aktionen
     private ActionTableModel actionTableModel;
 
     public editWindowTopComponent() {
         initComponents();
         setName(Bundle.CTL_editWindowTopComponent());
         setToolTipText(Bundle.HINT_editWindowTopComponent());
+        actionTableGegenstandAuswahl.addItem("blablaTest");
 
     }
 
@@ -200,13 +208,14 @@ public final class editWindowTopComponent extends TopComponent {
         @SuppressWarnings("Unchecked")
         @Override
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+            System.out.println("row: " + rowIndex + " column: " + columnIndex);
             switch (columnIndex) {
                 case 0:
                     actionTableData.get(rowIndex).setBewegterGegenstand((String) aValue);
                 case 1:
                     actionTableData.get(rowIndex).setZielGegenstand((String) aValue);
                 case 2:
-                    actionTableData.get(rowIndex).setZielIstInventar((Boolean) aValue);
+                    actionTableData.get(rowIndex).setZielIstInventar(aValue == null ? false : (Boolean) aValue);
                 case 3:
                     actionTableData.get(rowIndex).setMethode((String) aValue);
                 case 4:
@@ -216,20 +225,23 @@ public final class editWindowTopComponent extends TopComponent {
 
         @Override
         public int findColumn(String columnName) {
-            switch (columnName) {
-                case "bewegter Gegenstand":
-                    return 0;
-                case "Zielgegentsnd":
-                    return 1;
-                case "Zielgegenstand im Inventar?":
-                    return 2;
-                case "Methode":
-                    return 3;
-                case "Argumente":
-                    return 4;
-                default:
-                    return -1;
+            if ("bewegter Gegenstand" == columnName) {
+                return 0;
             }
+            if ("Zielgegenstand" == columnName) {
+                return 1;
+            }
+            if ("Zielgegenstand im Inventar?" == columnName) {
+                return 2;
+            }
+            if ("Methode" == columnName) {
+                return 3;
+            }
+            if ("Argumente" == columnName) {
+                return 4;
+            }
+            return -1;
+
         }
 
         @Override
@@ -282,7 +294,18 @@ public final class editWindowTopComponent extends TopComponent {
 
         @Override
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-            super.setValueAt(aValue, rowIndex, columnIndex); //TODO: Implement, see other Model
+            synchronized (actionTableData) {
+                switch (columnIndex) {
+                    case 0:
+                        gegenstandTableData.get(rowIndex).setEnumConstant((String) aValue);
+                    case 1:
+                        gegenstandTableData.get(rowIndex).setUserDisplayName((String) aValue);
+                    case 2:
+                        gegenstandTableData.get(rowIndex).setTooltip((String) aValue);
+                    case 3:
+                        gegenstandTableData.get(rowIndex).setImageFileNameSnippets((String) aValue);
+                }
+            }
         }
 
         @Override
@@ -297,12 +320,35 @@ public final class editWindowTopComponent extends TopComponent {
 
         @Override
         public int findColumn(String columnName) {
-            return super.findColumn(columnName); //TODO: Implement, see other Model
+            if ("Enum Konstante".equals(columnName)) {
+                return 0;
+            }
+            if ("Nutzer Anzeige Name".equals(columnName)) {
+                return 1;
+            }
+            if ("Tooltip".equals(columnName)) {
+                return 2;
+            }
+            if ("Bild Datei Namen Schnipsel".equals(columnName)) {
+                return 3;
+            }
+            throw new IndexOutOfBoundsException("No Column with the name: \"" + columnName + "\" exists.");
         }
 
         @Override
         public String getColumnName(int column) {
-            return super.getColumnName(column); //TODO: Implement, see other Model
+            switch (column) {
+                case 0:
+                    return "Enum Konstante";
+                case 1:
+                    return "Nutzer Anzeige Name";
+                case 2:
+                    return "Tooltip";
+                case 3:
+                    return "Bild Datei Namen Schnipsel";
+                default:
+                    throw new IndexOutOfBoundsException("Column index out of bounds. (" + column + ")");
+            }
         }
 
         @Override
@@ -317,7 +363,18 @@ public final class editWindowTopComponent extends TopComponent {
 
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
-            throw new UnsupportedOperationException("Not supported yet."); //TODO: Implement, see other Model
+            switch (columnIndex) {
+                case 0:
+                    return gegenstandTableData.get(rowIndex).getEnumConstant();
+                case 1:
+                    return gegenstandTableData.get(rowIndex).getUserDisplayName();
+                case 2:
+                    return gegenstandTableData.get(rowIndex).getTooltip();
+                case 3:
+                    return gegenstandTableData.get(rowIndex).getImageFileNameSnippets();
+                default:
+                    throw new IndexOutOfBoundsException("Parameter columnIndex out of bounds. (" + columnIndex + ")");
+            }
         }
 
     }
@@ -406,7 +463,9 @@ public final class editWindowTopComponent extends TopComponent {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        actionTableData.add(new actionTableRow());
+        synchronized (actionTableData) {
+            actionTableData.add(new actionTableRow());
+        }
         actionTableModel.notifyRowAdded();// TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
 
