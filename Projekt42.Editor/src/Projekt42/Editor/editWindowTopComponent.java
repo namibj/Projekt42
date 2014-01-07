@@ -70,7 +70,7 @@ public final class editWindowTopComponent extends TopComponent {
 
     }
 
-    public class GegenstandTableRow {
+    public class GegenstandTableRow implements Comparable<GegenstandTableRow> {
 
         private String enumConstant, userDisplayName, tooltip, imageFileNameSnippets;
 
@@ -139,6 +139,11 @@ public final class editWindowTopComponent extends TopComponent {
             }
             final GegenstandTableRow other = (GegenstandTableRow) obj;
             return !((this.enumConstant == null) ? (other.enumConstant != null) : !this.enumConstant.equals(other.enumConstant));
+        }
+
+        @Override
+        public int compareTo(GegenstandTableRow o) {
+            return enumConstant.compareTo(o.enumConstant);
         }
 
     }
@@ -313,6 +318,8 @@ public final class editWindowTopComponent extends TopComponent {
                     gegenstandTableData.get(rowIndex).setEnumConstant((String) aValue);
                     actionTableGegenstandAuswahl.addItem((String) aValue);
                     Collections.sort(gegenstaendeFuerAuswahl);
+                    Collections.sort(gegenstandTableData);
+                    fireTableDataChanged();
                     break;
                 case 1:
                     gegenstandTableData.get(rowIndex).setUserDisplayName((String) aValue);
@@ -415,8 +422,8 @@ public final class editWindowTopComponent extends TopComponent {
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         jTable1.setModel(actionTableModel = new ActionTableModel());
         jTable1.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(actionTableGegenstandAuswahl));
@@ -428,19 +435,19 @@ public final class editWindowTopComponent extends TopComponent {
         jTable2.getTableHeader().setReorderingAllowed(false);
         jScrollPane2.setViewportView(jTable2);
 
-        org.openide.awt.Mnemonics.setLocalizedText(jButton1, org.openide.util.NbBundle.getMessage(editWindowTopComponent.class, "editWindowTopComponent.jButton1.text")); // NOI18N
-        jButton1.setToolTipText(org.openide.util.NbBundle.getMessage(editWindowTopComponent.class, "editWindowTopComponent.jButton1.toolTipText")); // NOI18N
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
-        org.openide.awt.Mnemonics.setLocalizedText(jButton2, org.openide.util.NbBundle.getMessage(editWindowTopComponent.class, "editWindowTopComponent.jButton2.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(jButton2, "Neuer Gegenstand");
         jButton2.setToolTipText(org.openide.util.NbBundle.getMessage(editWindowTopComponent.class, "editWindowTopComponent.jButton2.toolTipText")); // NOI18N
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(jButton1, "Neue Kombination");
+        jButton1.setToolTipText(org.openide.util.NbBundle.getMessage(editWindowTopComponent.class, "editWindowTopComponent.jButton1.toolTipText")); // NOI18N
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
             }
         });
 
@@ -473,7 +480,7 @@ public final class editWindowTopComponent extends TopComponent {
                 .addComponent(jScrollPane1)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -482,26 +489,23 @@ public final class editWindowTopComponent extends TopComponent {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jScrollPane2)
                         .addGap(18, 18, 18)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        //synchronized (actionTableData) {
-        actionTableData.add(new actionTableRow());
-        //}
-        actionTableModel.notifyRowAdded();// TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
-
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         gegenstandTableData.add(new GegenstandTableRow());
         gegenstandTableModel.notifyRowAdded();
-        // TODO add your handling code here:
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        actionTableData.add(new actionTableRow());
+        actionTableModel.notifyRowAdded();
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
